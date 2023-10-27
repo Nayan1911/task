@@ -22,12 +22,11 @@ jobs:
     - name: Assign Date
       run:
         BRANCH=$(echo "$GITHUB_REF" | awk -F'/' '{print $3}')
-        echo "BRANCH=$BRANCH" >> $GITHUB_ENV 
-        echo "DATE=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
+        echo "BRANCH=$(echo "$GITHUB_REF" | awk -F'/' '{print $3}')" >> $GITHUB_ENV && echo "DATE=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
 
     - name: Checking
       run:
-        echo $BRANCH
+        echo $BRANCH 
         echo $DATE
 
     - name: Assign Variable
