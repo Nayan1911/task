@@ -80,21 +80,11 @@ jobs:
 
     - name: Calculate New Tag
       run:
-        #NEW_TAG=$(echo "$LATEST_TAG" | awk -F'/' '{print $3 + 1}') # Incrementing new tag
-        #echo "LATEST_TAG=$NEW_TAG" >> $GITHUB_ENV
-        CURRENT_TAG="${{ env.LATEST_TAG }}"
-        NUMERIC_PART=$(echo "$CURRENT_TAG" | grep -oE '[0-9]+')
-        INCREMENTED_NUMERIC_PART=$((NUMERIC_PART + 1))
-        
-        # Replace the numeric part with the incremented value in the tag
-        NEW_TAG="${CURRENT_TAG/$NUMERIC_PART/$INCREMENTED_NUMERIC_PART}"
+        NEW_TAG=$(echo "$LATEST_TAG" | awk -F'/' '{print $3 + 1}') # Incrementing new tag
         echo "LATEST_TAG=$NEW_TAG" >> $GITHUB_ENV
       env:
         LATEST_TAG: ${{ env.LATEST_TAG }}
 
-    - name: Check New Tag
-      run:
-        echo $LATEST_TAG
 
     - name: Build & Push Docker Image
       uses: docker/build-push-action@v2
