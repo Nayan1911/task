@@ -18,6 +18,8 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Enable Docker BuildKit
+      run: export DOCKER_BUILDKIT=1
 
     - name: Assign Date
       run:
@@ -50,12 +52,14 @@ jobs:
       run: mkdir -p /tmp/.buildx-cache
 
     - name: Build & Push Docker Image
-      uses: docker/build-push-action@v5
+      uses: docker/buildx-action@v5
       with:
-          image: sharmanayan/springboot-images-new
-          tags: ${{ env.image_new }}
-          registry: docker.io
-          dockerfile: Dockerfile
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+        driver: docker-container
+        image: sharmanayan/springboot-images-new
+        tags: ${{ env.image_new }}
+        registry: docker.io
+        dockerfile: Dockerfile
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache
+
 
