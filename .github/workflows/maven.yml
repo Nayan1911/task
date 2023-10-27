@@ -66,7 +66,6 @@ jobs:
 
     - name: Debugging & Latest Version
       run: |
-        curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name'
         latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name')
         echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
         echo "DEBUG: LATEST_TAG=$latest_tag"
