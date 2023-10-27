@@ -24,25 +24,16 @@ jobs:
     - name: Assign Date
       run:
         echo "BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-        echo "Date=$(date + '%d+%m+%y')" >> $GITHUB_ENV
+        echo "Date=$(env.DATE)" >> $GITHUB_ENV
 
-    - name: Check Date & Branch
+    - name: Check Date & Branch % variable
       run:
         echo $BRANCH
         echo $Date
+        echo "$image_new=$BRANCH-$DATE.1" >> $GITHUB_ENV
 
-    - name: Assigning final variable
+    - name: Checking final variable
       run:
-        echo "$image_new=$BRANCH-$DATE.1"
         echo $image_new
 
-    - name: Build & Push docker image
-      uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-      with:
-        image: sharmanayan/springboot-images-new
-        tags: $image_new
-        registry: docker.io
-        dockerfile: Dockerfile
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
 
