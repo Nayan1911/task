@@ -31,7 +31,7 @@ jobs:
 
     - name: Assign Variable
       run:
-        echo "image_new=sharmanayan/springboot-images-new$BRANCH-$DATE.1" >> $GITHUB_ENV
+        echo "image_new=sharmanayan/springboot-images-new:$BRANCH-$DATE.1" >> $GITHUB_ENV   #poora image name ek saath define krdia
 
     - name: Checking final variable
       run:
@@ -46,25 +46,16 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Create Cache Directory
-      run: mkdir -p /tmp/.buildx-cache
 
     - name: Build and push Docker image in adminApp
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v2  #ye action change krdia
       with:
-          context: ./
-          file: Dockerfile
-          push: true
-          tags: ${{ env.image_new }}
-#    - name: Build & Push Docker Image
-#      uses: docker/buildx-action@v5
-#      with:
-#        driver: docker-container
-#        image: sharmanayan/springboot-images-new
-#        tags: ${{ env.image_new }}
-#        registry: docker.io
-#        dockerfile: Dockerfile
-#        cache-from: type=local,src=/tmp/.buildx-cache
-#        cache-to: type=local,dest=/tmp/.buildx-cache
+          context: ./    #ye isliye kuki iss location p dockerfile hai
+          file: Dockerfile  #docker file name
+          push: true               #docker push krna h isliye
+          tags: ${{ env.image_new }}  #yaha p tag
 
 
+
+samajh aaya ?
+hn
