@@ -54,8 +54,3 @@ jobs:
           file: Dockerfile  #docker file name
           push: true               #docker push krna h isliye
           tags: ${{ env.image_new }}  #yaha p tag
-
-
-
-samajh aaya ?
-hn
