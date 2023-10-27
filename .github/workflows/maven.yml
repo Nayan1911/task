@@ -21,11 +21,20 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
+    - name: Assign Date
+      run:
+        echo "BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+        echo "Date= $(date + '%d+%m+%y')" >> $GITHUB_ENV
+
+    - name: Assigning final variable
+      run:
+        echo "$image_new=$BRANCH-$DATE.1"
+
     - name: Build & Push docker image
       uses: mr-smithers-excellent/docker-build-push@v5
       with:
         image: sharmanayan/springboot-images-new
-        tags: latest
+        tags: $image_new
         registry: docker.io
         dockerfile: Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
