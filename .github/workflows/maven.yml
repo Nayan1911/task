@@ -50,7 +50,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
           image: sharmanayan/springboot-images-new
-          tags: $image_new
+          tags: ${{ env.image_new }}
           registry: docker.io
           dockerfile: Dockerfile
 
