@@ -55,18 +55,21 @@ jobs:
     #      push: true               #docker push krna h isliye
     #      tags: ${{ env.image_new }}  #yaha p tag
 
-    - name: Get Latest Version
-      id: get_version
-      run: |
-        latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.tag.name')
-        echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
-      env:
-        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+    #- name: Get Latest Version
+     # id: get_version
+      #run: |
+       # latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.tag.name')
+        #echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
+     # env:
+      #  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+       # DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Debugging
+    - name: Debugging & Latest Version
       run: |
         curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name'
+        latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.tag.name')
+        echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
+        echo "DEBUG: LATEST_TAG=$latest_tag"
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -74,5 +77,6 @@ jobs:
 
     - name: Print Latest Version
       run: |
-        latest_version=${{ LATEST_TAG }}
+        echo "Latest Docker Version: $LATEST_TAG"
+        latest_version=$LATEST_TAG
         echo "Latest Docker Version: $latest_version"
