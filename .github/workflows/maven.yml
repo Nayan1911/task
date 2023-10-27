@@ -59,12 +59,12 @@ jobs:
       id: get_version
       run: |
         latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name' | grep -E 'YourRegexPattern' | sort -Vr | head -n 1)
-        echo "::set-output name=latest_version::$latest_tag"
+        echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: Print Latest Version
       run: |
-        latest_version=${{ steps.get_version.outputs.latest_version }}
+        latest_version=$LATEST_TAG
         echo "Latest Docker Version: $latest_version"
