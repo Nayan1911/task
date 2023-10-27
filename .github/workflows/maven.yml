@@ -74,5 +74,5 @@ jobs:
 
     - name: Print Latest Version
       run: |
-        latest_version=${{ env.LATEST_TAG }}
+        latest_version=${{ LATEST_TAG }}
         echo "Latest Docker Version: $latest_version"
