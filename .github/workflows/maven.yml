@@ -57,14 +57,14 @@ jobs:
 
     - name: Get Latest Version
       id: get_version
-      run: |
+      run:
         latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name')
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: Debugging
-      run: |
+      run:
         curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name'
         echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
       env:
@@ -79,11 +79,15 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Calculate New Tag
-      run: |
+      run:
         NEW_TAG=$(echo "$LATEST_TAG" | awk -F. '{print $1 "." $2 "." $3 + 1}') # Incrementing new tag
         echo "LATEST_TAG=$NEW_TAG" >> $GITHUB_ENV
       env:
         LATEST_TAG: ${{ env.LATEST_TAG }}
+
+    - name: Check New Tag
+      run:
+        echo ${{ env.LATEST_TAG }}
 
     - name: Build & Push Docker Image
       uses: docker/build-push-action@v2
