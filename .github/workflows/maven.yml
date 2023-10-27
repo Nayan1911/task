@@ -99,4 +99,4 @@ jobs:
         context: ./    #ye isliye kuki iss location p dockerfile hai
         file: Dockerfile  #docker file name
         push: true               #docker push krna h isliye
-        tags: "${{ env.image_new }}" + "1"
+        tags: ${{ env.image_new + 1 }}
