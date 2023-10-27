@@ -78,12 +78,12 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Calculate New Tag
-      run:
-        NEW_TAG=$(echo "$LATEST_TAG" | awk -F'/' '{print $3 + 1}') # Incrementing new tag
-        echo "LATEST_TAG=$NEW_TAG" >> $GITHUB_ENV
-      env:
-        LATEST_TAG: ${{ env.LATEST_TAG }}
+    #- name: Calculate New Tag
+    #  run:
+    #    NEW_TAG=$(echo "$LATEST_TAG" | awk -F'/' '{print $3 + 1}') # Incrementing new tag
+    #    echo "LATEST_TAG=$NEW_TAG" >> $GITHUB_ENV
+    #  env:
+    #    LATEST_TAG: ${{ env.LATEST_TAG }}
 
 
     - name: Build & Push Docker Image
@@ -92,5 +92,5 @@ jobs:
         context: ./  # Location of your Dockerfile and build context
         file: Dockerfile  # Path to your Dockerfile
         push: true  # Push the image to the registry
-        tags: ${{ env.LATEST_TAG }}  # Use the updated LATEST_TAG as the tag
+        tags: $({{ env.LATEST_TAG }} + 1)  # Use the updated LATEST_TAG as the tag
 
