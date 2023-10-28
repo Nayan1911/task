@@ -80,13 +80,12 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    #- name: Calculate New Tag
-    #  run:
-    #    NEW_TAG=$(echo "$LATEST_TAG" | awk -F'/' '{print $3 + 1}') # Incrementing new tag
-    #    echo "LATEST_TAG=$NEW_TAG" >> $GITHUB_ENV
-    #  env:
-    #    LATEST_TAG: ${{ env.LATEST_TAG }}
-
+    - name: Cache Docker Buildx
+      uses: actions/cache@v2
+      with:
+        path: ~/.docker/buildx
+        key: ${{ runner.os }}-${{ matrix.java }}-${{ hashFiles('Dockerfile') }}-${{ hashFiles('**/*.xml') }}
+        restore-keys: ${{ runner.os }}-${{ matrix.java }}-${{ hashFiles('Dockerfile') }}-
 
     - name: Build & Push Docker Image
       uses: docker/build-push-action@v2
