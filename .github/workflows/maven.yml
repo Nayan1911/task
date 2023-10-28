@@ -65,9 +65,9 @@ jobs:
         REPO_NAME=${{ secrets.DOCKER_REPO }}
               
       # Create the Docker repository
-        curl -X POST "https://hub.docker.com/v2/repositories/$REPO_NAME/" \
-        -H "Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}" \
-        -H "Content-Type: springboot-images-new.jar"
+        curl -X POST "https://hub.docker.com/v2/repositories/$REPO_NAME/"
+          -H "Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
+          -H "Content-Type: springboot-images-new.jar"
 
         echo "Created Docker repository: $REPO_NAME"
 
