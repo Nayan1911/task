@@ -60,7 +60,6 @@ jobs:
         echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
     - name: Check Set Tag
-      id: check-tag
       run: |
         echo $LATEST_TAG
 
