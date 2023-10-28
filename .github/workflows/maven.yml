@@ -61,18 +61,19 @@ jobs:
         latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name') 
         echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
       env:
-        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     - name: Debugging
       run: |
         regex_pattern='^main-\d{2}-\d{2}-\d{4}$'
         latest_tag=$(echo "$latest_tag" | grep -E "$regex_pattern" | sort -Vr | head -n 1)
         new_numeric_part=$((latest_tag + 1))
         new_tag="main-$(date +'%d-%m-%Y')-${new_numeric_part}"
+        echo $new_tag
         echo "LAST_TAG=$new_tag" >> $GITHUB_ENV
       env:
-        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v1
@@ -96,9 +97,7 @@ jobs:
     - name: Build & Push Docker Image
       uses: docker/build-push-action@v2
       with:
-        context: ./  # Location of your Dockerfile and build context
-        file: Dockerfile  # Path to your Dockerfile
-        push: true  # Push the image to the registry
-        tags: ${{ env.LAST_TAG }}  # Use the updated LATEST_TAG as the tag
-
-
+        context: ./
+        file: Dockerfile
+        push: true
+        tags: ${{ env.LAST_TAG }}
