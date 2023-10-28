@@ -40,29 +40,6 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    #- name: Log in to Docker Hub
-     # uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-      #with:
-       #   username: ${{ secrets.DOCKER_USERNAME }}
-        #  password: ${{ secrets.DOCKER_PASSWORD }}
-
-
-    #- name: Build and push Docker image in adminApp
-    #  uses: docker/build-push-action@v2  #ye action change krdia
-    #  with:
-    #      context: ./    #ye isliye kuki iss location p dockerfile hai
-    #      file: Dockerfile  #docker file name
-    #      push: true               #docker push krna h isliye
-    #      tags: ${{ env.image_new }}  #yaha p tag
-
-#    - name: Get Latest Version
-#      id: get_version
-#      run:
-#        latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name')
-#        echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
-#      env:
-#        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-#        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     - name: Debugging
       run: |
         IMAGE_NAME="sharmanayan/springboot-images-new"
@@ -70,17 +47,15 @@ jobs:
         API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
         AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
         RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
-      # Extract the latest tag matching the regex pattern
         LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
 
-      # regex_pattern='^main-\d{2}-\d{2}-\d{4}$'
-        latest_tag=$(echo "$latest_tag" | grep -E "$regex_pattern" | sort -Vr | head -n 1)
+#        latest_tag=$(echo "$latest_tag" | grep -E "$regex_pattern" | sort -Vr | head -n 1)
         echo $LATEST_TAG
-        new_numeric_part=$((latest_tag + 1))
-        echo $new_numeric_part
-        new_tag="sharmanayan/springboot-images-new:main-$(date +'%d-%m-%Y')-${new_numeric_part}"
-        echo $new_tag
-        echo "LAST_TAG=$new_tag" >> $GITHUB_ENV
+#        new_numeric_part=$((latest_tag + 1))
+#        echo $new_numeric_part
+#        new_tag="sharmanayan/springboot-images-new:main-$(date +'%d-%m-%Y')-${new_numeric_part}"
+#        echo $new_tag
+#        echo "LAST_TAG=$new_tag" >> $GITHUB_ENV
       env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
