@@ -37,6 +37,8 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
+
+
 #    - name: Debugging
 #      id: check-tag
 #      run: |
@@ -81,34 +83,25 @@ jobs:
 #        push: true
 #        tags: ${{ env.TAG }}
 
-
-    - name: Set Repository Name
-      id: repo
-      run: echo "::set-output name=repository-name::${{ github.event.inputs.repository-name }}"
-
-    - name: Set Pat
-      id: path
-      run: echo "::set-output name=path::${{ github.event.inputs.path }}"
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Create Docker Repository
-      id: create-repo
-      run: |
-        repository_name="${{ steps.repo.outputs.repository-name }}"
-        path="${{ steps.path.outputs.path }}"
-        docker_username="${{ secrets.DOCKER_USERNAME }}"
-        docker_password="${{ secrets.DOCKER_PASSWORD }}"
-              
-      # Authenticate with Docker Hub
-        echo "$docker_password" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            
-      # Create the Docker repository
-        docker buildx create --name mybuilder --use
-        docker buildx inspect mybuilder --bootstrap
-             
-      # Push to the new repository
-        docker buildx build --file $path/Dockerfile --push -t $docker_username/$repository_name:latest $path
-
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+      run: |
+        docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        docker build -t $DOCKER_USERNAME/$DOCKER_REPO .
+        docker push $DOCKER_USERNAME/$DOCKER_REPO
 
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2  #ye action change krdia
+      with:
+        context: ./    #ye isliye kuki iss location p dockerfile hai
+        file: Dockerfile  #docker file name
+        push: true               #docker push krna h isliye
+        tags: ${{ env.image_new }}  #yaha p tag
