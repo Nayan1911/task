@@ -29,10 +29,6 @@ jobs:
         echo $BRANCH 
         echo $DATE
 
-    #- name: Assign Variable
-     # run:
-      #  echo "image_new=sharmanayan/springboot-images-new:$BRANCH-$DATE.1" >> $GITHUB_ENV   #poora image name ek saath define krdia
-
     - name: Checking final variable
       run:
         echo $image_new
@@ -50,13 +46,7 @@ jobs:
         RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
         LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
 
-#        latest_tag=$(echo "$latest_tag" | grep -E "$regex_pattern" | sort -Vr | head -n 1)
         echo $LATEST_TAG
-#        new_numeric_part=$((latest_tag + 1))
-#        echo $new_numeric_part
-#        new_tag="sharmanayan/springboot-images-new:main-$(date +'%d-%m-%Y')-${new_numeric_part}"
-#        echo $new_tag
-#        echo "LAST_TAG=$new_tag" >> $GITHUB_ENV
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v1
