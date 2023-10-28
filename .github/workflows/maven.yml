@@ -70,6 +70,10 @@ jobs:
         regex_pattern='^main-\d{2}-\d{2}-\d{4}$'
         tags=$(echo "$latest_tag" | jq -r ".results[].name")
         latest_tag=$(echo "$tags" | grep -E "$regex_pattern" | sort -Vr | head -n 1)
+        tag_numeric_part=$(echo "$latest_tag" | sed -n 's/main-\([0-9]\{2\}-[0-9]\{2\}-[0-9]\{4\}\).*/\1/p')
+      #Increment the numeric part of the tag
+        new_numeric_part=$((tag_numeric_part + 1))
+        new_tag="main-$(date +'%d-%m-%Y')-${new_numeric_part}"
         LATEST_TAG=$((latest_tag+1))
         echo "LAST_TAG=$LATEST_TAG" >> $GITHUB_ENV
       env:
