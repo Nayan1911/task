@@ -74,8 +74,7 @@ jobs:
       #Increment the numeric part of the tag
         new_numeric_part=$((tag_numeric_part + 1))
         new_tag="main-$(date +'%d-%m-%Y')-${new_numeric_part}"
-        LATEST_TAG=$((latest_tag+1))
-        echo "LAST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+        echo "LAST_TAG=$new_tag" >> $GITHUB_ENV
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
