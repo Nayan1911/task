@@ -47,7 +47,7 @@ jobs:
         LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
         echo $LATEST_TAG
         if [ -n "$LATEST_TAG" ]; then
-          LATEST_TAG="$image_name:$TAG_WITHOUT_BUILD_NUMBER.1"
+          LATEST_TAG="$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1"
           echo $LATEST_TAG
         else
           numeric_part="${LATEST_TAG##*.}"
