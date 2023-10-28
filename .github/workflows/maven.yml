@@ -46,6 +46,10 @@ jobs:
         RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
         LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
         echo $LATEST_TAG
+        if [ -n "$LATEST_TAG" ]; then
+          TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1
+          echo $TAG
+        fi
         
 
     - name: Check Set Tag
