@@ -49,6 +49,7 @@ jobs:
         if [ -n "$LATEST_TAG" ]; then
           LATEST_TAG="$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1"
           echo $LATEST_TAG
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
         else
           numeric_part="${LATEST_TAG##*.}"
           echo $numeric_part
@@ -56,8 +57,9 @@ jobs:
           echo $numeric_part
           LATEST_TAG="${TAG_WITHOUT_BUILD_NUMBER}.${numeric_part}"
           echo $LATEST_TAG
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
         fi
-        echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+        
 
     - name: Check Set Tag
       run: |
