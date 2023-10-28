@@ -11,78 +11,71 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
 
-    - name: Assign Date $ Branch
-      run:
-        BRANCH=$(echo "$GITHUB_REF" | awk -F'/' '{print $3}')
-        echo "BRANCH=$(echo "$GITHUB_REF" | awk -F'/' '{print $3}')" >> $GITHUB_ENV && echo "DATE=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
+      - name: Assign Date
+        run:
+          BRANCH=$(echo "$GITHUB_REF" | awk -F'/' '{print $3}')
+          echo "BRANCH=$(echo "$GITHUB_REF" | awk -F'/' '{print $3}')" >> $GITHUB_ENV && echo "DATE=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
 
-    - name: Checking
-      run:
-        echo $BRANCH 
-        echo $DATE
-        echo "$image_new=$BRANCH-$DATE.1" >> $GITHUB_ENV
+      - name: Checking
+        run:
+          echo $BRANCH
+          echo $DATE
 
-    - name: Checking final variable
-      run:
-        echo $image_new
+      - name: Checking final variable
+        run:
+          echo $image_new
 
-    - name: Build with Maven
-      run: mvn clean install
+      - name: Build with Maven
+        run: mvn clean install
 
-
-    - name: Debugging
-      id: check-tag
-      run: |
-        IMAGE_NAME=sharmanayan/test"
-        TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}"
-        API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
-        AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
-        RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
-        LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
-        echo $LATEST_TAG
-        if [ -n "$LATEST_TAG" ]; then
-          numeric_part="${LATEST_TAG##*.}"
-          echo $numeric_part
-          numeric_part=$((numeric_part + 1))
-          echo $numeric_part
-          TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.$numeric_part
-          echo $TAG
-          echo "TAG=$TAG" >> $GITHUB_ENV
-        else
-          TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1
-          echo $TAG
-          echo "TAG=$TAG" >> $GITHUB_ENV
-        fi
-        
-
-    - name: Check Set Tag
-      run: |
-        echo $TAG
+      - name: Debugging
+        id: check-tag
+        run: |
+          IMAGE_NAME="sharmanayan/test2"
+          TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}" 
+          API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
+          AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
+          RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
+          LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
+          echo $LATEST_TAG
+          if [ -n "$LATEST_TAG" ]; then
+            numeric_part="${LATEST_TAG##*.}"
+            echo $numeric_part
+            numeric_part=$((numeric_part + 1))
+            echo $numeric_part
+            TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.$numeric_part
+            echo $TAG
+            echo "TAG=$TAG" >> $GITHUB_ENV
+          else
+            TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1
+            echo $TAG
+            echo "TAG=$TAG" >> $GITHUB_ENV
+          fi
 
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Check Set Tag
+        run: |
+          echo $TAG 
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
 
-    - name: Build & Push Docker Image
-      uses: docker/build-push-action@v2
-      with:
-        context: ./
-        file: Dockerfile
-        push: true
-        tags: ${{ env.TAG }}
-
-
-
-
+      - name: Build & Push Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: Dockerfile
+          push: true
+          tags: ${{ env.TAG }}
