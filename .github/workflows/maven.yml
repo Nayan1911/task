@@ -65,9 +65,17 @@ jobs:
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     - name: Debugging
       run: |
-        regex_pattern='^main-\d{2}-\d{2}-\d{4}$'
+        IMAGE_NAME="sharmanayan/springboot-images-new"
+        TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}"
+        API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
+        AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
+        RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
+      # Extract the latest tag matching the regex pattern
+        LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
+
+      # regex_pattern='^main-\d{2}-\d{2}-\d{4}$'
         latest_tag=$(echo "$latest_tag" | grep -E "$regex_pattern" | sort -Vr | head -n 1)
-        echo $latest_tag
+        echo $LATEST_TAG
         new_numeric_part=$((latest_tag + 1))
         echo $new_numeric_part
         new_tag="sharmanayan/springboot-images-new:main-$(date +'%d-%m-%Y')-${new_numeric_part}"
