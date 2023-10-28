@@ -46,7 +46,7 @@ jobs:
         # Create the repository using Docker Hub's API
         curl -X POST "https://hub.docker.com/v2/repositories/$DOCKER_USERNAME/$NEW_REPO_NAME/" \
           -H "Authorization: Bearer $DOCKER_TOKEN" \
-          -H "Content-Type: application/json"
+          -H "Content-Type: application/jar"
 
       env:
         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
@@ -55,7 +55,7 @@ jobs:
     - name: Debugging
       id: check-tag
       run: |
-        IMAGE_NAME="sharmanayan/test"
+        IMAGE_NAME="$DOCKER_USERNAME/$NEW_REPO_NAME"
         TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}"
         API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
         AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
