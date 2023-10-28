@@ -19,7 +19,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Assign Date
+    - name: Assign Date $ Branch
       run:
         BRANCH=$(echo "$GITHUB_REF" | awk -F'/' '{print $3}')
         echo "BRANCH=$(echo "$GITHUB_REF" | awk -F'/' '{print $3}')" >> $GITHUB_ENV && echo "DATE=$(date +'%d-%m-%Y')" >> $GITHUB_ENV
@@ -28,6 +28,7 @@ jobs:
       run:
         echo $BRANCH 
         echo $DATE
+        echo "$image_new=$BRANCH-$DATE.1" >> $GITHUB_ENV
 
     - name: Checking final variable
       run:
@@ -36,48 +37,78 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    - name: Debugging
-      id: check-tag
-      run: |
-        IMAGE_NAME="sharmanayan/springboot-images-new"
-        TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}" 
-        API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
-        AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
-        RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
-        LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
-        echo $LATEST_TAG
-        if [ -n "$LATEST_TAG" ]; then
-          numeric_part="${LATEST_TAG##*.}"
-          echo $numeric_part
-          numeric_part=$((numeric_part + 1))
-          echo $numeric_part
-          TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.$numeric_part
-          echo $TAG
-          echo "TAG=$TAG" >> $GITHUB_ENV
-        else
-          TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1
-          echo $TAG
-          echo "TAG=$TAG" >> $GITHUB_ENV
-        fi
+#    - name: Debugging
+#      id: check-tag
+#      run: |
+#        IMAGE_NAME="sharmanayan/springboot-images-new"
+#        TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}"
+#        API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
+#        AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
+#        RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
+#        LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
+#        echo $LATEST_TAG
+#        if [ -n "$LATEST_TAG" ]; then
+#          numeric_part="${LATEST_TAG##*.}"
+#          echo $numeric_part
+#          numeric_part=$((numeric_part + 1))
+#          echo $numeric_part
+#          TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.$numeric_part
+#          echo $TAG
+#          echo "TAG=$TAG" >> $GITHUB_ENV
+#        else
+#          TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1
+#          echo $TAG
+#          echo "TAG=$TAG" >> $GITHUB_ENV
+#        fi
         
 
-    - name: Check Set Tag
+#    - name: Check Set Tag
+#      run: |
+#        echo $TAG
+
+#    - name: Log in to Docker Hub
+#      uses: docker/login-action@v1
+#      with:
+#        username: ${{ secrets.DOCKER_USERNAME }}
+#        password: ${{ secrets.DOCKER_PASSWORD }}
+
+
+#    - name: Build & Push Docker Image
+#      uses: docker/build-push-action@v2
+#      with:
+#        context: ./
+#        file: Dockerfile
+#        push: true
+#        tags: ${{ env.TAG }}
+
+
+    - name: Set Repository Name
+      id: repo
+      run: echo "::set-output name=repository-name::${{ github.event.inputs.repository-name }}"
+
+    - name: Set Pat
+      id: path
+      run: echo "::set-output name=path::${{ github.event.inputs.path }}"
+
+    - name: Create Docker Repository
+      id: create-repo
       run: |
-        echo $TAG 
+        repository_name="${{ steps.repo.outputs.repository-name }}"
+        path="${{ steps.path.outputs.path }}"
+        docker_username="${{ secrets.DOCKER_USERNAME }}"
+        docker_password="${{ secrets.DOCKER_PASSWORD }}"
+              
+      # Authenticate with Docker Hub
+        echo "$docker_password" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            
+      # Create the Docker repository
+        docker buildx create --name mybuilder --use
+        docker buildx inspect mybuilder --bootstrap
+             
+      # Push to the new repository
+        docker buildx build --file $path/Dockerfile --push -t $docker_username/$repository_name:latest $path
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-
-    - name: Build & Push Docker Image
-      uses: docker/build-push-action@v2
-      with:
-        context: ./
-        file: Dockerfile
-        push: true
-        tags: ${{ env.TAG }}
-
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
