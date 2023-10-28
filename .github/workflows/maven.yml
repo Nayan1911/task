@@ -37,6 +37,20 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
+    - name: Create Docker Repository
+      run: |
+        DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+        DOCKER_TOKEN=${{ secrets.DOCKER_TOKEN }}
+        NEW_REPO_NAME=${{ secrets.DOCKER_REPO }}
+        
+        # Create the repository using Docker Hub's API
+        curl -X POST "https://hub.docker.com/v2/repositories/$DOCKER_USERNAME/$NEW_REPO_NAME/" \
+          -H "Authorization: Bearer $DOCKER_TOKEN" \
+          -H "Content-Type: application/json"
+
+      env:
+        DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+
 
     - name: Debugging
       id: check-tag
