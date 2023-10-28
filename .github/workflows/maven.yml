@@ -43,22 +43,28 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Create Docker Repository
-      run: |
-        DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-        DOCKER_TOKEN=${{ secrets.DOCKER_TOKEN }}
-        NEW_REPO=${{ secrets.DOCKER_REPO }}
+#    - name: Create Docker Repository
+#      run: |
+#       DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+#        DOCKER_TOKEN=${{ secrets.DOCKER_TOKEN }}
+#        NEW_REPO=${{ secrets.DOCKER_REPO }}
         
         # Create the repository using Docker Hub's API
-        docker create repository $DOCKER_USERNAME/$NEW_REPO
-      env:
-        DOCKER_TOKEN: $DOCKER_TOKEN
+#        docker create repository $DOCKER_USERNAME/$NEW_REPO
+#      env:
+#        DOCKER_TOKEN: $DOCKER_TOKEN
 
+    - name: Create Docker repository
+      uses: docker/create-repo-action@v2
+      with:
+        repository: ${{ github.repository }}
+        name: ${{ github.workflow }}
+        description: ${{ github.description }}
 
     - name: Debugging
       id: check-tag
       run: |
-        IMAGE_NAME="$DOCKER_USERNAME/$NEW_REPO"
+        IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}"
         TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}"
         API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
         AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
