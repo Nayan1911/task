@@ -92,6 +92,7 @@ jobs:
     - name: Create Docker Repository
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
       run: |
         docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
