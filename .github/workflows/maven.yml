@@ -53,7 +53,7 @@ jobs:
         if [[ "$LATEST_TAG" == "null" ]]; then
           LATEST_TAG="$image_name:$TAG_WITHOUT_BUILD_NUMBER"
         else
-          numeric_part="${LATEST_TAG##*.}"
+          numeric_part="${LATEST_TAG##*-}"
           numeric_part=$((numeric_part + 1))
           LATEST_TAG="${image_name}:${TAG_WITHOUT_BUILD_NUMBER}.${numeric_part}"
         fi
