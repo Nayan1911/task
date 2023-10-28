@@ -68,7 +68,7 @@ jobs:
         regex_pattern='^main-\d{2}-\d{2}-\d{4}$'
         latest_tag=$(echo "$latest_tag" | grep -E "$regex_pattern" | sort -Vr | head -n 1)
         new_numeric_part=$((latest_tag + 1))
-        new_tag="main-$(date +'%d-%m-%Y')-${new_numeric_part}"
+        new_tag="sharmanayan/springboot-images-new:main-$(date +'%d-%m-%Y')-${new_numeric_part}"
         echo $new_tag
         echo "LAST_TAG=$new_tag" >> $GITHUB_ENV
       env:
