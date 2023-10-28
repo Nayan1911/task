@@ -55,14 +55,14 @@ jobs:
     #      push: true               #docker push krna h isliye
     #      tags: ${{ env.image_new }}  #yaha p tag
 
-    - name: Get Latest Version
-      id: get_version
-      run:
-        latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name') 
-        echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
-      env:
-        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+#    - name: Get Latest Version
+#      id: get_version
+#      run:
+#        latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name')
+#        echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
+#      env:
+#        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+#        DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     - name: Debugging
       run: |
         IMAGE_NAME="sharmanayan/springboot-images-new"
@@ -81,6 +81,10 @@ jobs:
         new_tag="sharmanayan/springboot-images-new:main-$(date +'%d-%m-%Y')-${new_numeric_part}"
         echo $new_tag
         echo "LAST_TAG=$new_tag" >> $GITHUB_ENV
+      env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
     - name: Log in to Docker Hub
       uses: docker/login-action@v1
       with:
