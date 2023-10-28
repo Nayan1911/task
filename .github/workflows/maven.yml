@@ -45,7 +45,7 @@ jobs:
         AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
         RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
         LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
-        echo $LATEST_TAG
+        echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
     - name: Set Latest Tag
       id: set-latest-tag
@@ -54,7 +54,7 @@ jobs:
           LATEST_TAG="$image_name:$TAG_WITHOUT_BUILD_NUMBER.1"
         else
           numeric_part="${LATEST_TAG##*.}"
-          numeric_part=$((numeric_part '+' 1))
+          numeric_part=$((numeric_part + 1))
           LATEST_TAG="${TAG_WITHOUT_BUILD_NUMBER}.${numeric_part}"
         fi
         echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
