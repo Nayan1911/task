@@ -47,9 +47,6 @@ jobs:
         docker create repository $DOCKER_USERNAME/$NEW_REPO>s
       env:
         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
 
 
     - name: Debugging
