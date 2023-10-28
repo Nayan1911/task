@@ -47,8 +47,17 @@ jobs:
         LATEST_TAG=$(echo "$RESPONSE" | jq -r ".results[].name | select(. | test(\"$TAG_WITHOUT_BUILD_NUMBER\"))" | sort -rV | head -n 1)
         echo $LATEST_TAG
         if [ -n "$LATEST_TAG" ]; then
+          numeric_part="${LATEST_TAG##*.}"
+          echo $numeric_part
+          numeric_part=$((numeric_part + 1))
+          echo $numeric_part
+          TAG="${TAG_WITHOUT_BUILD_NUMBER}.${numeric_part}"
+          echo $TAG
+          echo "TAG=$TAG" >> $GITHUB_ENV
+        else
           TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1
           echo $TAG
+          echo "TAG=$TAG" >> $GITHUB_ENV
         fi
         
 
@@ -69,4 +78,4 @@ jobs:
         context: ./
         file: Dockerfile
         push: true
-        tags: ${{ env.LATEST_TAG }}
+        tags: ${{ env.TAG }}
