@@ -28,7 +28,7 @@ jobs:
       run:
         echo $BRANCH 
         echo $DATE
-        echo "$image_new=$BRANCH-$DATE.1" >> $GITHUB_ENV
+        echo "$image_new="${{ env.BRANCH }}-${{ env.DATE }}.1" >> $GITHUB_ENV
 
     - name: Checking final variable
       run:
