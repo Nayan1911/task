@@ -69,7 +69,7 @@ jobs:
         curl -X POST "https://hub.docker.com/v2/repositories/$DOCKER_USERNAME/$REPO_NAME/" \
         Bearer $DOCKER_TOKEN \
 
-        echo "Created Docker repository: $REPO_NAME"
+        echo $REPO_NAME
 
       # Tag your Docker image with the new repository name
 #        docker tag your-image:latest $REPO_NAME:latest
