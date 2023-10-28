@@ -67,7 +67,7 @@ jobs:
     - name: Debugging
       run: |
         regex_pattern='^main-\d{2}-\d{2}-\d{4}$'
-        LATEST_TAG=$(echo "$latest_tag" | jq -r ".results[].name |  grep -E "$regex_pattern"  | sort -rV | head -n 1)
+        LATEST_TAG=$(echo "$latest_tag" | jq -r ".results[].name |  grep -E "$regex_pattern" " | sort -rV | head -n 1)
         echo "LAST_TAG=$LATEST_TAG + 1" >> $GITHUB_ENV
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
