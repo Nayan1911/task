@@ -55,7 +55,7 @@ jobs:
         else
           numeric_part="${LATEST_TAG##*.}"
           numeric_part=$((numeric_part + 1))
-          LATEST_TAG="${TAG_WITHOUT_BUILD_NUMBER}.${numeric_part}"
+          LATEST_TAG="${TAG_WITHOUT_BUILD_NUMBER}${numeric_part}"
         fi
         echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
 
