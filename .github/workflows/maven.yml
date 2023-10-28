@@ -41,21 +41,21 @@ jobs:
       run: |
         DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
         DOCKER_TOKEN=${{ secrets.DOCKER_TOKEN }}
-        NEW_REPO_NAME=${{ secrets.DOCKER_REPO }}
+        NEW_REPO=${{ secrets.DOCKER_REPO }}
         
         # Create the repository using Docker Hub's API
-        curl -X POST "https://hub.docker.com/v2/repositories/$DOCKER_USERNAME/$NEW_REPO_NAME/" \
-          -H "Authorization: Bearer $DOCKER_TOKEN" \
-          -H "Content-Type: application/jar"
-
+        docker create repository $DOCKER_USERNAME/$NEW_REPO>s
       env:
         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
 
     - name: Debugging
       id: check-tag
       run: |
-        IMAGE_NAME="$DOCKER_USERNAME/$NEW_REPO_NAME"
+        IMAGE_NAME="$DOCKER_USERNAME/$NEW_REPO"
         TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}"
         API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
         AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
