@@ -57,7 +57,7 @@ jobs:
           else
             TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1
             echo $TAG
-            echo "TAG=$TAG" >> $GITHUB_ENV
+            echo "TAG=$IMAGE_NAME" >> $GITHUB_ENV
           fi
 
 
