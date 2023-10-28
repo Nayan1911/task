@@ -90,26 +90,14 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: Create Docker Repository
+    - name: Create Docker Hub Repository
       env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
         DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        REPO_NAME: ${{ secrets.DOCKER_REPO }}  # Change this to your desired repository name
       run: |
-        docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        docker login -u $DOCKER_USERNAME -p $DOCKER_TOKEN
-        docker build -t $DOCKER_USERNAME/$DOCKER_REPO .
-        docker push $DOCKER_USERNAME/$DOCKER_REPO
+      # Authenticate with Docker Hub using the token
+        docker login -u $GITHUB_ACTOR -p $DOCKER_TOKEN
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v2  #ye action change krdia
-      with:
-        context: ./    #ye isliye kuki iss location p dockerfile hai
-        file: Dockerfile  #docker file name
-        push: true               #docker push krna h isliye
-        tags: ${{ env.image_new }}  #yaha p tag
+      # Create a new Docker Hub repository
+        curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $DOCKER_TOKEN" -d '{"namespace": "$GITHUB_ACTOR", "name": "$REPO_NAME"}' https://hub.docker.com/v2/repositories/
 
-    - name: Inspect Docker Images
-      run: |
-        docker image ls
