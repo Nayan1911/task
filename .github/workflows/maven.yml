@@ -51,7 +51,7 @@ jobs:
           echo $numeric_part
           numeric_part=$((numeric_part + 1))
           echo $numeric_part
-          TAG="${TAG_WITHOUT_BUILD_NUMBER}.${numeric_part}"
+          TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.$numeric_part
           echo $TAG
           echo "TAG=$TAG" >> $GITHUB_ENV
         else
@@ -63,7 +63,7 @@ jobs:
 
     - name: Check Set Tag
       run: |
-        echo $LATEST_TAG 
+        echo $TAG 
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v1
@@ -79,3 +79,5 @@ jobs:
         file: Dockerfile
         push: true
         tags: ${{ env.TAG }}
+
+
