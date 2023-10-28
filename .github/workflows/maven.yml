@@ -67,8 +67,7 @@ jobs:
               
       # Create the Docker repository
         curl -X POST "https://hub.docker.com/v2/repositories/$DOCKER_USERNAME/$REPO_NAME/" \
-        -H "Authorization: Bearer $DOCKER_TOKEN" \
-        -H "Content-Type: application/json"
+        Bearer $DOCKER_TOKEN \
 
         echo "Created Docker repository: $REPO_NAME"
 
