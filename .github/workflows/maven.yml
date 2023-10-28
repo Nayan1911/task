@@ -28,7 +28,7 @@ jobs:
       run:
         echo $BRANCH 
         echo $DATE
-        echo "$image_new="${{ env.BRANCH }}-${{ env.DATE }}.1" >> $GITHUB_ENV
+        echo "$image_new=$BRANCH-$DATE.1" >> $GITHUB_ENV
 
     - name: Checking final variable
       run:
@@ -61,7 +61,7 @@ jobs:
     - name: Debugging
       id: check-tag
       run: |
-        IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}"
+        IMAGE_NAME="$DOCKER_USERNAME/$REPO_NAME"
         TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}"
         API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
         AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
@@ -101,7 +101,7 @@ jobs:
         context: ./
         file: Dockerfile
         push: true
-        tags: ${{ env.image_new }}
+        tags: ${{ env.DATE }}
 
 
 
