@@ -52,7 +52,7 @@ jobs:
       id: set-latest-tag
       run: |
         echo $LATEST_TAG
-        if [[ "$LATEST_TAG" == "null" ]]; then
+        if [ -n "$LATEST_TAG" ]; then
           LATEST_TAG="$image_name:$TAG_WITHOUT_BUILD_NUMBER.1"
           echo $LATEST_TAG
         else
