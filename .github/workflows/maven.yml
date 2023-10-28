@@ -58,16 +58,17 @@ jobs:
     - name: Get Latest Version
       id: get_version
       run:
-        latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name')
+        latest_tag=$(curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/") 
         echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-
+        #regex = $BRANCH.$DATE
     - name: Debugging
       run: |
-        curl -s "https://registry.hub.docker.com/v2/repositories/sharmanayan/springboot-images-new/tags/" | jq -r '.results[].name'
-        echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
+        regex_pattern='^main-\d{2}-\d{2}-\d{4}$'
+        LATEST_TAG=$(echo "$latest_tag" | jq -r ".results[].name |  grep -E "$regex_pattern"  | sort -rV | head -n 1)
+        echo "LAST_TAG=$LATEST_TAG + 1" >> $GITHUB_ENV
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -93,5 +94,6 @@ jobs:
         context: ./  # Location of your Dockerfile and build context
         file: Dockerfile  # Path to your Dockerfile
         push: true  # Push the image to the registry
-        tags: $({{ env.LATEST_TAG }} + 1)  # Use the updated LATEST_TAG as the tag
+        tags: ${{ env.LAST_TAG }}  # Use the updated LATEST_TAG as the tag
+
 
