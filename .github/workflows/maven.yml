@@ -89,11 +89,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: test
+      - name: Clean Docker Builder and System
         run: |
-          docker builder prune -a
-          docker system prune --volumes
-
+          yes | docker builder prune -a
+          yes | docker system prune --volumes
+      
 
       - name: Build & Push Docker Image
         uses: docker/build-push-action@v2
