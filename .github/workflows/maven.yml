@@ -57,7 +57,7 @@ jobs:
         id: check-tag
         run: |
           IMAGE_NAME="sharmanayan/test2"
-          TAG_WITHOUT_BUILD_NUMBER="${{ secrets.DOCKER_USERNAME }}-${{ secrets.DOCKER_REPO }}" 
+          TAG_WITHOUT_BUILD_NUMBER="${{ env.BRANCH }}-${{ env.DATE }}-${{ env.PULLED_DATA }}" 
           API_URL="https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/?page_size=10&ordering=last_updated"
           AUTH_HEADER="Authorization: Bearer ${{ secrets.DOCKER_TOKEN }}"
           RESPONSE=$(curl --location --header "$AUTH_HEADER" "$API_URL")
@@ -68,11 +68,11 @@ jobs:
             echo $numeric_part
             numeric_part=$((numeric_part + 1))
             echo $numeric_part
-            TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.$numeric_part
+            TAG=$TAG_WITHOUT_BUILD_NUMBER.$numeric_part
             echo $TAG
             echo "TAG=$TAG" >> $GITHUB_ENV
           else
-            TAG=$IMAGE_NAME:$TAG_WITHOUT_BUILD_NUMBER.1
+            TAG=$TAG_WITHOUT_BUILD_NUMBER.1
             echo $TAG
             echo "TAG=$TAG" >> $GITHUB_ENV
           fi
