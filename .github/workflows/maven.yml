@@ -36,6 +36,25 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
+      - name: Checkout Main Branch
+        uses: actions/checkout@v2
+        with:
+          ref: main # Checkout the main branch
+
+      - name: Read Data from File
+        id: read-file
+        run: |
+          DATA=$(cat https://github.com/Nayan1911/github-actions-.git/.Metadata) # Replace with the path to your file
+          echo "PULLED_DATA=$DATA" >> $GITHUB_ENV
+          shell: bash
+
+      - name: Use Pulled Data
+        run: |
+          PULLED_DATA=$PULLED_DATA
+          echo "Pulled data: $PULLED_DATA"
+        env:
+          PULLED_DATA: ${{ env.PULLED_DATA }}
+
       - name: Debugging
         id: check-tag
         run: |
@@ -59,7 +78,7 @@ jobs:
             echo $TAG
             echo "TAG=$TAG" >> $GITHUB_ENV
           fi
-
+      
 
       - name: Check Set Tag
         run: |
