@@ -42,7 +42,7 @@ jobs:
       - name: Read Data from File
         id: read-file
         run: |
-          DATA=$(cat .Metadata) # Replace with the path to your file
+          DATA=$(cat .Metadata) 
           echo "PULLED_DATA=$DATA" >> $GITHUB_ENV
         shell: bash
 
@@ -95,4 +95,4 @@ jobs:
           context: ./
           file: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.TAG }}
+          tags: ${{ env.TAG }}
