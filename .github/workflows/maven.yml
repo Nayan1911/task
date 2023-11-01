@@ -38,15 +38,13 @@ jobs:
 
       - name: Checkout Main Branch
         uses: actions/checkout@v2
-        with:
-          ref: main # Checkout the main branch
 
       - name: Read Data from File
         id: read-file
         run: |
-          DATA=$(cat https://github.com/Nayan1911/github-actions-/blob/5d9c1653b57a334cee316ca63e98187e05424279/.Metadata) # Replace with the path to your file
+          DATA=$(cat .Metadata) # Replace with the path to your file
           echo "PULLED_DATA=$DATA" >> $GITHUB_ENV
-          shell: bash
+        shell: bash
 
       - name: Use Pulled Data
         run: |
