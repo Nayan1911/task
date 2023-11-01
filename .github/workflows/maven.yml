@@ -91,8 +91,9 @@ jobs:
 
       - name: Clean Docker Builder and System
         run: |
-          yes | docker builder prune -a
-          yes | docker system prune --volumes
+          docker builder prune -a --force
+          docker system prune -a --volumes --force
+      
       
 
       - name: Build & Push Docker Image
