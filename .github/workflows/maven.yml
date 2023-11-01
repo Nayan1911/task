@@ -94,13 +94,13 @@ jobs:
       - name: Build Docker image
         run: |
           TAG=${{ env.TAG }}
-          docker build --no-cache -t sharmanayan/test2:$TAG .
+          docker build --no-cache -t $TAG .
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
       - name: Push Docker image
         run: |
           TAG=${{ env.TAG }}
-          docker push sharmanayan/test2:$TAG
+          docker push $TAG
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
